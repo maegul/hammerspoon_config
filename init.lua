@@ -62,17 +62,27 @@ end
 
 -- >> Get backup since times
 
-function get_phd_backup_time_since()
-	local time_since = math.floor(
-		hs.execute(phd_backup_since_script_path)
-		)
+function get_phd_backup_time_since(raw_time)
+	if raw_time then
+		time_since = hs.execute(phd_backup_since_script_path)
+	else
+		time_since = math.floor(
+			hs.execute(phd_backup_since_script_path)
+			)
+	end
+
 	return time_since
 end
 
-function get_dev_backup_time_since()
-	local time_since = math.floor(
-		hs.execute(dev_backup_since_script_path)
-		)
+function get_dev_backup_time_since(raw_time)
+	if raw_time then
+		time_since = hs.execute(dev_backup_since_script_path)
+	else
+		time_since = math.floor(
+			hs.execute(dev_backup_since_script_path)
+			)
+	end
+
 	return time_since
 end
 
@@ -87,14 +97,31 @@ function mkBackupMenuBarFunction(menubarItem)
 	end
 end
 
+-- >> Menu Bar onclick callback
+
+-- generates function, taking the title update function as an enclosing variable
+function mkBackupMenuBarMenuFunction(menubarItem_update_fn)
+	return function()
+		menubarItem_update_fn()  -- update title of menubar
+		-- return menu table
+		return {
+			{title = "Phd: " .. get_phd_backup_time_since(true) .. " days"},
+			{title = "Dev: " .. get_dev_backup_time_since(true) .. " days"}
+		}
+	end
+end
+
 
 -- > Backup Since Menubar
 
--- "backup_mb" is presumed by updateBackupMenuBarItem function
 backup_mb = hs.menubar.new()
+-- create callbacks
 backup_mb_update = mkBackupMenuBarFunction(backup_mb)
+backup_mb_menu = mkBackupMenuBarMenuFunction(backup_mb_update)
 -- init menubar
 backup_mb_update()
+-- Set menu callback
+backup_mb:setMenu(backup_mb_menu)
 -- backup_mb:setTitle(get_phd_backup_time_since() .. "|" .. get_dev_backup_time_since())
 
 -- >> Timers
