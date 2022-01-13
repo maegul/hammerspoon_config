@@ -86,6 +86,24 @@ function get_dev_backup_time_since(raw_time)
 	return time_since
 end
 
+-- >> Zotero (proto)
+
+function zotero_bbt_cayw(format)
+	local citation_format = format or 'cite'
+	local current_app = hs.application.frontmostApplication()
+	local url = 'http://127.0.0.1:23119/better-bibtex/cayw?format=' .. citation_format
+	status, resp, head = hs.http.get(url, {nil})
+	-- print(status, resp)
+
+	if status == 200 then
+		hs.pasteboard.setContents(resp)
+	else
+		hs.alert("Zotero CAYW Failed (status code:" .. status)
+	end
+
+	-- zotero takes focus, focus back on initial app
+	current_app:activate()
+end
 -- >> Update Menu Bar function constructor
 
 -- returns function with provided menubar item as enclosed variable
@@ -323,26 +341,31 @@ recursiveKeyBindings = {
 			zoom_app:selectMenuItem('Mute Audio', true)
 		end
 	end,
-	[{{}, 'z', '???'}] = function()
-		print('dump key info inner')
-		message_string = ""
-		for k, v in pairs(recursiveKeyBindings) do
-			-- print(k[2], k[3])
-			message_string = message_string .. k[2] .. '\t\t\t' .. k[3] .. '\n'
-			-- for k1,v1 in pairs(k) do
-			-- 	print(k1)
-			-- end
-		end
-		-- print(message_string)
-		hs.alert.show(message_string, 'infty')
-		-- use hs.hotkey.modal for modal escape
-		control = hs.hotkey.new('ctrl', 'z', function()
-			print('close keybind help')
-			hs.alert.closeAll()
-			control:delete()
-		end)
-		control:enable()
-	end
+	[{{}, 'z', 'cite'}] = {
+		[{{}, 'c', 'inline'}] = function() zotero_bbt_cayw('cite') end,
+		[{{}, 'p', 'parens'}] = function() zotero_bbt_cayw('citep') end,
+		[{{}, 'b', 'full'}] = function() zotero_bbt_cayw('formatted-bibliography') end,
+	}
+	-- [{{}, 'z', '???'}] = function()
+	-- 	print('dump key info inner')
+	-- 	message_string = ""
+	-- 	for k, v in pairs(recursiveKeyBindings) do
+	-- 		-- print(k[2], k[3])
+	-- 		message_string = message_string .. k[2] .. '\t\t\t' .. k[3] .. '\n'
+	-- 		-- for k1,v1 in pairs(k) do
+	-- 		-- 	print(k1)
+	-- 		-- end
+	-- 	end
+	-- 	-- print(message_string)
+	-- 	hs.alert.show(message_string, 'infty')
+	-- 	-- use hs.hotkey.modal for modal escape
+	-- 	control = hs.hotkey.new('ctrl', 'z', function()
+	-- 		print('close keybind help')
+	-- 		hs.alert.closeAll()
+	-- 		control:delete()
+	-- 	end)
+	-- 	control:enable()
+	-- end
 }
 
 hs.hotkey.bind(superhyper, 'k', spoon.RecursiveBinder.recursiveBind(recursiveKeyBindings)
