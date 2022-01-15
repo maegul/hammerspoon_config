@@ -111,7 +111,7 @@ function mkBackupMenuBarFunction(menubarItem)
 	return function()
 		-- Adding date and time for testing / prototyping
 		-- PRESUMES menubar item variable name is backup_mb
-		menubarItem:setTitle(get_phd_backup_time_since() .. "|" .. get_dev_backup_time_since() .. "(" .. os.date('%H %a') .. ")")
+		menubarItem:setTitle(get_phd_backup_time_since() .. "|" .. get_dev_backup_time_since())
 	end
 end
 
@@ -171,8 +171,10 @@ end)
 -- end
 -- )
 
+-- >> Settings
 -- must use full modifier names for some reason, eg "command"
-spoon.RecursiveBinder.showBindHelper = false
+spoon.RecursiveBinder.showBindHelper = true
+spoon.RecursiveBinder.helperEntryEachLine = 3
 
 recursiveKeyBindings = {
 	[{{}, 'h', '|- '}] = function()
@@ -187,45 +189,46 @@ recursiveKeyBindings = {
 	[{{}, 'o', '--|'}] = function()
 		spoon.WindowHalfsAndThirds:rightThird()
 	end,
-	[{{'shift'}, 'y', '|. '}] = function()
+	[{{'shift'}, 'y', '||.'}] = function()
 		spoon.WindowHalfsAndThirds:leftTwoThird()
 	end,
-	[{{'shift'}, 'o', ' .|'}] = function()
+	[{{'shift'}, 'o', '.||'}] = function()
 		spoon.WindowHalfsAndThirds:rightTwoThird()
 	end,
 	[{{}, 'j', ' V '}] = function()
 		spoon.WindowHalfsAndThirds:bottomHalf()
 	end,
-	[{{}, 'k', ' ∆ '}] = function()
+	[{{}, 'k', ' ^ '}] = function()
 		spoon.WindowHalfsAndThirds:topHalf()
 	end,
-	[{{}, 'u', ' ↖ ︎'}] = function()
+	[{{}, 'u', '`. '}] = function()
 		spoon.WindowHalfsAndThirds:topLeft()
 	end,
-	[{{}, 'i', ' ↗ ︎'}] = function()
+	[{{}, 'i', ' .`'}] = function()
 		spoon.WindowHalfsAndThirds:topRight()
 	end,
-	[{{}, 'n', ' ↙ ︎'}] = function()
+	[{{}, 'n', ',. '}] = function()
 		spoon.WindowHalfsAndThirds:bottomLeft()
 	end,
-	[{{}, 'm', ' ↘ ︎'}] = function()
+	[{{}, 'm', ' .,'}] = function()
 		spoon.WindowHalfsAndThirds:bottomRight()
 	end,
 	[{{}, 'c', '-|-'}] = function()
 		spoon.WindowHalfsAndThirds:center()
 	end,
-	[{{}, 'f', ' ⚀ '}] = function()
+	[{{}, 'f', 'max'}] = function()
 		spoon.WindowHalfsAndThirds:maximize()
 	end,
 	[{{}, ';', 'tmx'}] = function()
 		spoon.WindowHalfsAndThirds:toggleMaximized()
 	end,
-	[{{}, 'left', '⚀← '}] = function()
+	[{{}, 'left', '@<-'}] = function()
 		spoon.WindowScreenLeftAndRight:oneScreenLeft()
 	end,
-	[{{}, 'right', ' →⚀'}] = function()
+	[{{}, 'right', '->@'}] = function()
 		spoon.WindowScreenLeftAndRight:oneScreenRight()
 	end,
+	-- New sublime window
 	[{{}, 's', 'sbl'}] = function()
 		hs.application.launchOrFocus(subl_app_name)
 		local app = hs.application.frontmostApplication()
@@ -264,7 +267,7 @@ recursiveKeyBindings = {
 			-- })
 		end
 	end,
-	[{{}, 'e', 'fil'}] = function()
+	[{{}, 'e', 'fin'}] = function()
 		hs.application.launchOrFocus('Finder')
 		local app = hs.application.frontmostApplication()
 		local wins = app:focusedWindow()
@@ -276,7 +279,7 @@ recursiveKeyBindings = {
 			-- })
 		end
 	end,
-	[{{}, 'r', 'fil'}] = function()
+	[{{}, 'r', 'nts'}] = function()
 		hs.application.launchOrFocus('Notes')
 		local app = hs.application.frontmostApplication()
 		local wins = app:focusedWindow()
@@ -285,13 +288,14 @@ recursiveKeyBindings = {
 			hs.eventtap.keyStroke({"cmd"}, 'n', 0)
 		end
 	end,
-	[{{}, 'p', 'sks'}] = function()
+	[{{}, 'p', 'pst'}] = function()
 		hs.application.launchOrFocus('Stickies')
 		local app = hs.application.frontmostApplication()
 		-- local wins = app:focusedWindow()
 		-- always create a new post it for stickies (?)
 		hs.eventtap.keyStroke({"cmd"}, 'n', 0)
 	end,
+	-- Open finder file in new sublime window
 	[{{'shift'}, 's', 'osb'}] = function()
 		local app = hs.application.frontmostApplication()
 		-- print(app:title())
@@ -308,6 +312,7 @@ recursiveKeyBindings = {
 			)
 		end
 	end,
+	-- Add finder file to sublime window
 	[{{'option'}, 's', 'asb'}] = function() -- add to an existing window instead
 		local app = hs.application.frontmostApplication()
 		-- print(app:title())
@@ -341,9 +346,9 @@ recursiveKeyBindings = {
 			zoom_app:selectMenuItem('Mute Audio', true)
 		end
 	end,
-	[{{}, 'z', 'cite'}] = {
-		[{{}, 'c', 'inline'}] = function() zotero_bbt_cayw('cite') end,
-		[{{}, 'p', 'parens'}] = function() zotero_bbt_cayw('citep') end,
+	[{{}, 'z', 'zot'}] = {
+		[{{}, 'c', 'cite'}] = function() zotero_bbt_cayw('cite') end,
+		[{{}, 'p', 'citep'}] = function() zotero_bbt_cayw('citep') end,
 		[{{}, 'b', 'full'}] = function() zotero_bbt_cayw('formatted-bibliography') end,
 	}
 	-- [{{}, 'z', '???'}] = function()
