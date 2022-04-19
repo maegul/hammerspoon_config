@@ -173,7 +173,7 @@ end)
 
 -- >> Settings
 -- must use full modifier names for some reason, eg "command"
-spoon.RecursiveBinder.showBindHelper = true
+spoon.RecursiveBinder.showBindHelper = false
 spoon.RecursiveBinder.helperEntryEachLine = 3
 
 recursiveKeyBindings = {
