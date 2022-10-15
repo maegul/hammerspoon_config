@@ -260,12 +260,12 @@ recursiveKeyBindings = {
 		local app = hs.application.frontmostApplication()
 		local wins = app:focusedWindow()
 
-		if (not wins) then
-			hs.eventtap.keyStroke({"cmd"}, 'n', 0)
-			-- app:selectMenuItem({
-			-- 	"Shell", "New Window", "errolDark"
-			-- })
-		end
+		-- if (not wins) then
+		-- 	-- hs.eventtap.keyStroke({"cmd"}, 'n', 0)
+		-- 	-- app:selectMenuItem({
+		-- 	-- 	"Shell", "New Window", "errolDark"
+		-- 	-- })
+		-- end
 	end,
 	[{{}, 'e', 'fin'}] = function()
 		hs.application.launchOrFocus('Finder')
