@@ -13,8 +13,17 @@ local dev_backup_since_script_path = '~/bin/bin_links/python /Users/errollloyd/b
 -- > Load Spoons
 -- hs.loadSpoon("MiroWindowsManager")
 hs.loadSpoon("RecursiveBinder")
+
 hs.loadSpoon("WindowHalfsAndThirds")
 hs.loadSpoon("WindowScreenLeftAndRight")
+
+-- >> Setting the Log Level for hotkey
+-- loglevel - can be 'nothing', 'error', 'warning', 'info', 'debug', or 'verbose';
+-- 	... or a corresponding number between 0 and 5
+-- See https://www.hammerspoon.org/docs/hs.hotkey.html#setLogLevel
+
+-- RecursiveBinder (which relies on hotkey), is talkative, so setting to error
+hs.hotkey.setLogLevel(1)
 
 
 -- > Utility Functions
@@ -61,92 +70,95 @@ end
 
 
 -- >> Get backup since times
+-- Put on ice for now (2024-11-23)
 
-function get_phd_backup_time_since(raw_time)
-	if raw_time then
-		time_since = hs.execute(phd_backup_since_script_path)
-	else
-		time_since = math.floor(
-			hs.execute(phd_backup_since_script_path)
-			)
-	end
+-- function get_phd_backup_time_since(raw_time)
+-- 	if raw_time then
+-- 		time_since = hs.execute(phd_backup_since_script_path)
+-- 	else
+-- 		time_since = math.floor(
+-- 			hs.execute(phd_backup_since_script_path)
+-- 			)
+-- 	end
 
-	return time_since
-end
+-- 	return time_since
+-- end
 
-function get_dev_backup_time_since(raw_time)
-	if raw_time then
-		time_since = hs.execute(dev_backup_since_script_path)
-	else
-		time_since = math.floor(
-			hs.execute(dev_backup_since_script_path)
-			)
-	end
+-- function get_dev_backup_time_since(raw_time)
+-- 	if raw_time then
+-- 		time_since = hs.execute(dev_backup_since_script_path)
+-- 	else
+-- 		time_since = math.floor(
+-- 			hs.execute(dev_backup_since_script_path)
+-- 			)
+-- 	end
 
-	return time_since
-end
+-- 	return time_since
+-- end
 
 -- >> Zotero (proto)
+-- Not using right now (2024-11-23)
 
-function zotero_bbt_cayw(format)
-	local citation_format = format or 'cite'
-	local current_app = hs.application.frontmostApplication()
-	local url = 'http://127.0.0.1:23119/better-bibtex/cayw?format=' .. citation_format
-	status, resp, head = hs.http.get(url, {nil})
-	-- print(status, resp)
+-- function zotero_bbt_cayw(format)
+-- 	local citation_format = format or 'cite'
+-- 	local current_app = hs.application.frontmostApplication()
+-- 	local url = 'http://127.0.0.1:23119/better-bibtex/cayw?format=' .. citation_format
+-- 	status, resp, head = hs.http.get(url, {nil})
+-- 	-- print(status, resp)
 
-	if status == 200 then
-		hs.pasteboard.setContents(resp)
-	else
-		hs.alert("Zotero CAYW Failed (status code:" .. status)
-	end
+-- 	if status == 200 then
+-- 		hs.pasteboard.setContents(resp)
+-- 	else
+-- 		hs.alert("Zotero CAYW Failed (status code:" .. status)
+-- 	end
 
-	-- zotero takes focus, focus back on initial app
-	current_app:activate()
-end
--- >> Update Menu Bar function constructor
+-- 	-- zotero takes focus, focus back on initial app
+-- 	current_app:activate()
+-- end
+-- -- >> Update Menu Bar function constructor
 
--- returns function with provided menubar item as enclosed variable
-function mkBackupMenuBarFunction(menubarItem)
-	return function()
-		-- Adding date and time for testing / prototyping
-		-- PRESUMES menubar item variable name is backup_mb
-		menubarItem:setTitle(get_phd_backup_time_since() .. "|" .. get_dev_backup_time_since())
-	end
-end
+-- -- returns function with provided menubar item as enclosed variable
+-- function mkBackupMenuBarFunction(menubarItem)
+-- 	return function()
+-- 		-- Adding date and time for testing / prototyping
+-- 		-- PRESUMES menubar item variable name is backup_mb
+-- 		menubarItem:setTitle(get_phd_backup_time_since() .. "|" .. get_dev_backup_time_since())
+-- 	end
+-- end
 
 -- >> Menu Bar onclick callback
 
 -- generates function, taking the title update function as an enclosing variable
-function mkBackupMenuBarMenuFunction(menubarItem_update_fn)
-	return function()
-		menubarItem_update_fn()  -- update title of menubar
-		-- return menu table
-		return {
-			{title = "Phd: " .. get_phd_backup_time_since(true) .. " days"},
-			{title = "Dev: " .. get_dev_backup_time_since(true) .. " days"}
-		}
-	end
-end
+-- function mkBackupMenuBarMenuFunction(menubarItem_update_fn)
+-- 	return function()
+-- 		menubarItem_update_fn()  -- update title of menubar
+-- 		-- return menu table
+-- 		return {
+-- 			{title = "Phd: " .. get_phd_backup_time_since(true) .. " days"},
+-- 			{title = "Dev: " .. get_dev_backup_time_since(true) .. " days"}
+-- 		}
+-- 	end
+-- end
 
 
 -- > Backup Since Menubar
+-- On ice (2024-11-23)
 
-backup_mb = hs.menubar.new()
--- create callbacks
-backup_mb_update = mkBackupMenuBarFunction(backup_mb)
-backup_mb_menu = mkBackupMenuBarMenuFunction(backup_mb_update)
--- init menubar
-backup_mb_update()
--- Set menu callback
-backup_mb:setMenu(backup_mb_menu)
--- backup_mb:setTitle(get_phd_backup_time_since() .. "|" .. get_dev_backup_time_since())
+-- backup_mb = hs.menubar.new()
+-- -- create callbacks
+-- backup_mb_update = mkBackupMenuBarFunction(backup_mb)
+-- backup_mb_menu = mkBackupMenuBarMenuFunction(backup_mb_update)
+-- -- init menubar
+-- backup_mb_update()
+-- -- Set menu callback
+-- backup_mb:setMenu(backup_mb_menu)
+-- -- backup_mb:setTitle(get_phd_backup_time_since() .. "|" .. get_dev_backup_time_since())
 
--- >> Timers
-backup_time_1 = hs.timer.doAt(
-	'09:15', '1d', backup_mb_update)
-backup_timer_2 = hs.timer.doAt(
-	'18:15', '1d', backup_mb_update)
+-- -- >> Timers
+-- backup_time_1 = hs.timer.doAt(
+-- 	'09:15', '1d', backup_mb_update)
+-- backup_timer_2 = hs.timer.doAt(
+-- 	'18:15', '1d', backup_mb_update)
 
 
 -- > Window Paramaters
@@ -157,9 +169,10 @@ hs.grid.ui.textSize = 60;
 
 -- > Key Bindings
 
-hs.hotkey.bind({"cmd","alt", "ctrl", "shift"}, "i", function()
-	hs.alert("💖 LOVE YA 💖")
-end)
+-- Quick test
+-- hs.hotkey.bind({"cmd","alt", "ctrl", "shift"}, "i", function()
+-- 	hs.alert("💖 LOVE YA 💖")
+-- end)
 
 -- hs.hotkey.bind(superhyper, 'n', function()
 -- 	withCopiedValue(
@@ -171,6 +184,31 @@ end)
 -- end
 -- )
 
+-- >> test of just using hotkey modal
+-- works well, but self exit doesn't seem to work, instead must exit from the
+-- 	... modal manually, so may as well use recursive bind
+-- superModal = hs.hotkey.modal.new('cmd-alt-ctrl-shift', 'k', 'enter modal')
+-- superModal:bind(nil, 'h', 'Left!', function()
+-- 		local app = hs.application.frontmostApplication()
+-- 		app:selectMenuItem('Left', false)
+
+-- 		superModal.exit()
+-- 	end
+-- )
+-- superModal:bind(nil, 'l', 'Right!', function()
+-- 		local app = hs.application.frontmostApplication()
+-- 		app:selectMenuItem('Right', false)
+
+-- 		superModal.exit()
+-- 	end
+-- )
+-- superModal:bind(nil, 'escape', 'J!', function()
+-- 		superModal:exit()
+-- 	end
+-- 	)
+
+
+
 -- >> Settings
 -- must use full modifier names for some reason, eg "command"
 spoon.RecursiveBinder.showBindHelper = false
@@ -179,6 +217,7 @@ spoon.RecursiveBinder.helperEntryEachLine = 3
 recursiveKeyBindings = {
 	[{{}, 'h', '|- '}] = function()
 		spoon.WindowHalfsAndThirds:leftHalf()
+		-- hs.alert("hello")
 	end,
 	[{{}, 'l', ' -|'}] = function()
 		spoon.WindowHalfsAndThirds:rightHalf()
