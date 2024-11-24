@@ -184,234 +184,243 @@ hs.grid.ui.textSize = 60;
 -- end
 -- )
 
--- >> test of just using hotkey modal
--- works well, but self exit doesn't seem to work, instead must exit from the
--- 	... modal manually, so may as well use recursive bind
--- superModal = hs.hotkey.modal.new('cmd-alt-ctrl-shift', 'k', 'enter modal')
--- superModal:bind(nil, 'h', 'Left!', function()
--- 		local app = hs.application.frontmostApplication()
--- 		app:selectMenuItem('Left', false)
 
--- 		superModal.exit()
--- 	end
--- )
--- superModal:bind(nil, 'l', 'Right!', function()
--- 		local app = hs.application.frontmostApplication()
--- 		app:selectMenuItem('Right', false)
+-- >> just using hotkey modal
+-- ... works quite well
 
--- 		superModal.exit()
--- 	end
--- )
--- superModal:bind(nil, 'escape', 'J!', function()
--- 		superModal:exit()
--- 	end
--- 	)
+NativeWindowMgmtKeyMap = {
+	Left = 'h',
+	Right = 'l',
+	Fill = 'f',
+	Center = 'c',
+	Top = 'k',
+	Bottom = 'j',
+	['Top Left'] = 'u',
+	['Top Right'] = 'i',
+	['Bottom Left'] = 'n',
+	['Bottom Right'] = 'm',
+}
 
+local superModal = hs.hotkey.modal.new('cmd-alt-ctrl-shift', 'k', nil)
+for k, v in pairs(NativeWindowMgmtKeyMap) do
+		print(k, v)
+		superModal:bind(nil, v, nil, function()
+			superModal:exit()
+			local app = hs.application.frontmostApplication()
+			app:selectMenuItem(k, false)
+		end
+	)
+end
+superModal:bind(nil, 'escape', 'J!', function()
+		superModal:exit()
+	end
+	)
 
 
 -- >> Settings
 -- must use full modifier names for some reason, eg "command"
-spoon.RecursiveBinder.showBindHelper = false
-spoon.RecursiveBinder.helperEntryEachLine = 3
 
-recursiveKeyBindings = {
-	[{{}, 'h', '|- '}] = function()
-		spoon.WindowHalfsAndThirds:leftHalf()
-		-- hs.alert("hello")
-	end,
-	[{{}, 'l', ' -|'}] = function()
-		spoon.WindowHalfsAndThirds:rightHalf()
-	end,
-	[{{}, 'y', '|--'}] = function()
-		spoon.WindowHalfsAndThirds:leftThird()
-	end,
-	[{{}, 'o', '--|'}] = function()
-		spoon.WindowHalfsAndThirds:rightThird()
-	end,
-	[{{'shift'}, 'y', '||.'}] = function()
-		spoon.WindowHalfsAndThirds:leftTwoThird()
-	end,
-	[{{'shift'}, 'o', '.||'}] = function()
-		spoon.WindowHalfsAndThirds:rightTwoThird()
-	end,
-	[{{}, 'j', ' V '}] = function()
-		spoon.WindowHalfsAndThirds:bottomHalf()
-	end,
-	[{{}, 'k', ' ^ '}] = function()
-		spoon.WindowHalfsAndThirds:topHalf()
-	end,
-	[{{}, 'u', '`. '}] = function()
-		spoon.WindowHalfsAndThirds:topLeft()
-	end,
-	[{{}, 'i', ' .`'}] = function()
-		spoon.WindowHalfsAndThirds:topRight()
-	end,
-	[{{}, 'n', ',. '}] = function()
-		spoon.WindowHalfsAndThirds:bottomLeft()
-	end,
-	[{{}, 'm', ' .,'}] = function()
-		spoon.WindowHalfsAndThirds:bottomRight()
-	end,
-	[{{}, 'c', '-|-'}] = function()
-		spoon.WindowHalfsAndThirds:center()
-	end,
-	[{{}, 'f', 'max'}] = function()
-		spoon.WindowHalfsAndThirds:maximize()
-	end,
-	[{{}, ';', 'tmx'}] = function()
-		spoon.WindowHalfsAndThirds:toggleMaximized()
-	end,
-	[{{}, 'left', '@<-'}] = function()
-		spoon.WindowScreenLeftAndRight:oneScreenLeft()
-	end,
-	[{{}, 'right', '->@'}] = function()
-		spoon.WindowScreenLeftAndRight:oneScreenRight()
-	end,
-	-- New sublime window
-	[{{}, 's', 'sbl'}] = function()
-		hs.application.launchOrFocus(subl_app_name)
-		local app = hs.application.frontmostApplication()
+-- spoon.RecursiveBinder.showBindHelper = false
+-- spoon.RecursiveBinder.helperEntryEachLine = 3
 
-		hs.timer.doAfter(0.1, function()
-			local wins = app:focusedWindow()
-			if not wins then
-				hs.eventtap.keyStroke({"cmd", "shift"}, "n", 0)
-				-- app:selectMenuItem({
-				-- 	"File", "New Window"
-				-- })
-			end
-		end)
-	end,
-	[{{}, 't', 'trm'}] = function()
-		hs.application.launchOrFocus('Terminal')
-		local app = hs.application.frontmostApplication()
-		-- The above creates a new window when there are none at all?
+-- recursiveKeyBindings = {
+-- 	[{{}, 'h', '|- '}] = function()
+-- 		spoon.WindowHalfsAndThirds:leftHalf()
+-- 		-- hs.alert("hello")
+-- 	end,
+-- 	[{{}, 'l', ' -|'}] = function()
+-- 		spoon.WindowHalfsAndThirds:rightHalf()
+-- 	end,
+-- 	[{{}, 'y', '|--'}] = function()
+-- 		spoon.WindowHalfsAndThirds:leftThird()
+-- 	end,
+-- 	[{{}, 'o', '--|'}] = function()
+-- 		spoon.WindowHalfsAndThirds:rightThird()
+-- 	end,
+-- 	[{{'shift'}, 'y', '||.'}] = function()
+-- 		spoon.WindowHalfsAndThirds:leftTwoThird()
+-- 	end,
+-- 	[{{'shift'}, 'o', '.||'}] = function()
+-- 		spoon.WindowHalfsAndThirds:rightTwoThird()
+-- 	end,
+-- 	[{{}, 'j', ' V '}] = function()
+-- 		spoon.WindowHalfsAndThirds:bottomHalf()
+-- 	end,
+-- 	[{{}, 'k', ' ^ '}] = function()
+-- 		spoon.WindowHalfsAndThirds:topHalf()
+-- 	end,
+-- 	[{{}, 'u', '`. '}] = function()
+-- 		spoon.WindowHalfsAndThirds:topLeft()
+-- 	end,
+-- 	[{{}, 'i', ' .`'}] = function()
+-- 		spoon.WindowHalfsAndThirds:topRight()
+-- 	end,
+-- 	[{{}, 'n', ',. '}] = function()
+-- 		spoon.WindowHalfsAndThirds:bottomLeft()
+-- 	end,
+-- 	[{{}, 'm', ' .,'}] = function()
+-- 		spoon.WindowHalfsAndThirds:bottomRight()
+-- 	end,
+-- 	[{{}, 'c', '-|-'}] = function()
+-- 		spoon.WindowHalfsAndThirds:center()
+-- 	end,
+-- 	[{{}, 'f', 'max'}] = function()
+-- 		spoon.WindowHalfsAndThirds:maximize()
+-- 	end,
+-- 	[{{}, ';', 'tmx'}] = function()
+-- 		spoon.WindowHalfsAndThirds:toggleMaximized()
+-- 	end,
+-- 	[{{}, 'left', '@<-'}] = function()
+-- 		spoon.WindowScreenLeftAndRight:oneScreenLeft()
+-- 	end,
+-- 	[{{}, 'right', '->@'}] = function()
+-- 		spoon.WindowScreenLeftAndRight:oneScreenRight()
+-- 	end,
+-- 	-- New sublime window
+-- 	[{{}, 's', 'sbl'}] = function()
+-- 		hs.application.launchOrFocus(subl_app_name)
+-- 		local app = hs.application.frontmostApplication()
 
-		hs.timer.doAfter(0.1, function()
-			local wins = app:focusedWindow()
-			if (not wins) then
-				hs.eventtap.keyStroke({"cmd"}, "n", 0)
-			end
-		end)
-	end,
-	[{{}, 'w', 'web'}] = function()
-		hs.application.launchOrFocus('Safari')
-		local app = hs.application.frontmostApplication()
-		local wins = app:focusedWindow()
+-- 		hs.timer.doAfter(0.1, function()
+-- 			local wins = app:focusedWindow()
+-- 			if not wins then
+-- 				hs.eventtap.keyStroke({"cmd", "shift"}, "n", 0)
+-- 				-- app:selectMenuItem({
+-- 				-- 	"File", "New Window"
+-- 				-- })
+-- 			end
+-- 		end)
+-- 	end,
+-- 	[{{}, 't', 'trm'}] = function()
+-- 		hs.application.launchOrFocus('Terminal')
+-- 		local app = hs.application.frontmostApplication()
+-- 		-- The above creates a new window when there are none at all?
 
-		-- if (not wins) then
-		-- 	-- hs.eventtap.keyStroke({"cmd"}, 'n', 0)
-		-- 	-- app:selectMenuItem({
-		-- 	-- 	"Shell", "New Window", "errolDark"
-		-- 	-- })
-		-- end
-	end,
-	[{{}, 'e', 'fin'}] = function()
-		hs.application.launchOrFocus('Finder')
-		local app = hs.application.frontmostApplication()
-		local wins = app:focusedWindow()
+-- 		hs.timer.doAfter(0.1, function()
+-- 			local wins = app:focusedWindow()
+-- 			if (not wins) then
+-- 				hs.eventtap.keyStroke({"cmd"}, "n", 0)
+-- 			end
+-- 		end)
+-- 	end,
+-- 	[{{}, 'w', 'web'}] = function()
+-- 		hs.application.launchOrFocus('Safari')
+-- 		local app = hs.application.frontmostApplication()
+-- 		local wins = app:focusedWindow()
 
-		if (not wins) then
-			hs.eventtap.keyStroke({"cmd"}, 'n', 0)
-			-- app:selectMenuItem({
-			-- 	"Shell", "New Window", "errolDark"
-			-- })
-		end
-	end,
-	[{{}, 'r', 'nts'}] = function()
-		hs.application.launchOrFocus('Notes')
-		local app = hs.application.frontmostApplication()
-		local wins = app:focusedWindow()
+-- 		-- if (not wins) then
+-- 		-- 	-- hs.eventtap.keyStroke({"cmd"}, 'n', 0)
+-- 		-- 	-- app:selectMenuItem({
+-- 		-- 	-- 	"Shell", "New Window", "errolDark"
+-- 		-- 	-- })
+-- 		-- end
+-- 	end,
+-- 	[{{}, 'e', 'fin'}] = function()
+-- 		hs.application.launchOrFocus('Finder')
+-- 		local app = hs.application.frontmostApplication()
+-- 		local wins = app:focusedWindow()
 
-		if (not wins) then
-			hs.eventtap.keyStroke({"cmd"}, 'n', 0)
-		end
-	end,
-	[{{}, 'p', 'pst'}] = function()
-		hs.application.launchOrFocus('Stickies')
-		local app = hs.application.frontmostApplication()
-		-- local wins = app:focusedWindow()
-		-- always create a new post it for stickies (?)
-		hs.eventtap.keyStroke({"cmd"}, 'n', 0)
-	end,
-	-- Open finder file in new sublime window
-	[{{'shift'}, 's', 'osb'}] = function()
-		local app = hs.application.frontmostApplication()
-		-- print(app:title())
-		if (app:title() == 'Finder') then
-			withCopiedValue(function(filePath)
-				hs.task.new(
-					-- A full path is required, don't know how to get around
-					subl_cli,
-					function(c, o, e) end,
-					{'-n', filePath}
-				):start()
-				end,
-				{{"cmd", "alt"}, "c"} -- copy command for getting path from finder
-			)
-		end
-	end,
-	-- Add finder file to sublime window
-	[{{'option'}, 's', 'asb'}] = function() -- add to an existing window instead
-		local app = hs.application.frontmostApplication()
-		-- print(app:title())
-		if (app:title() == 'Finder') then
-			withCopiedValue(function(filePath)
-				hs.task.new(
-					subl_cli,
-					function(c, o, e) end,
-					{'-a', filePath}
-				):start()
-				end,
-				{{"cmd", "alt"}, "c"} -- copy command for getting path from finder
-			)
-		end
-	end,
-	[{{}, 'a', 'mic'}] = function() -- Toggle Audio unmuted of zoom conf call
-		zoom_app = hs.application.get('zoom.us')  -- Need to be precise with app name (?)
-		-- Could extend to move through a list of predefined apps
-		-- Check whether running, and if so, mute with appropriate menu item or keybinding
-		if (zoom_app:isRunning() == true) then
-			-- Item is either "Unmute Audio" or "Mute Audio"
-			zoom_app:selectMenuItem('Unmute Audio', true)
-		end
-	end,
-	[{{}, 'q', 'mut'}] = function() -- Toggle Audio unmuted of zoom conf call
-		zoom_app = hs.application.get('zoom.us')  -- Need to be precise with app name (?)
-		-- Could extend to move through a list of predefined apps
-		-- Check whether running, and if so, mute with appropriate menu item or keybinding
-		if (zoom_app:isRunning() == true) then
-			-- Item is either "Unmute Audio" or "Mute Audio"
-			zoom_app:selectMenuItem('Mute Audio', true)
-		end
-	end,
-	[{{}, 'z', 'zot'}] = {
-		[{{}, 'c', 'cite'}] = function() zotero_bbt_cayw('cite') end,
-		[{{}, 'p', 'citep'}] = function() zotero_bbt_cayw('citep') end,
-		[{{}, 'b', 'full'}] = function() zotero_bbt_cayw('formatted-bibliography') end,
-	}
-	-- [{{}, 'z', '???'}] = function()
-	-- 	print('dump key info inner')
-	-- 	message_string = ""
-	-- 	for k, v in pairs(recursiveKeyBindings) do
-	-- 		-- print(k[2], k[3])
-	-- 		message_string = message_string .. k[2] .. '\t\t\t' .. k[3] .. '\n'
-	-- 		-- for k1,v1 in pairs(k) do
-	-- 		-- 	print(k1)
-	-- 		-- end
-	-- 	end
-	-- 	-- print(message_string)
-	-- 	hs.alert.show(message_string, 'infty')
-	-- 	-- use hs.hotkey.modal for modal escape
-	-- 	control = hs.hotkey.new('ctrl', 'z', function()
-	-- 		print('close keybind help')
-	-- 		hs.alert.closeAll()
-	-- 		control:delete()
-	-- 	end)
-	-- 	control:enable()
-	-- end
-}
+-- 		if (not wins) then
+-- 			hs.eventtap.keyStroke({"cmd"}, 'n', 0)
+-- 			-- app:selectMenuItem({
+-- 			-- 	"Shell", "New Window", "errolDark"
+-- 			-- })
+-- 		end
+-- 	end,
+-- 	[{{}, 'r', 'nts'}] = function()
+-- 		hs.application.launchOrFocus('Notes')
+-- 		local app = hs.application.frontmostApplication()
+-- 		local wins = app:focusedWindow()
 
-hs.hotkey.bind(superhyper, 'k', spoon.RecursiveBinder.recursiveBind(recursiveKeyBindings)
-)
+-- 		if (not wins) then
+-- 			hs.eventtap.keyStroke({"cmd"}, 'n', 0)
+-- 		end
+-- 	end,
+-- 	[{{}, 'p', 'pst'}] = function()
+-- 		hs.application.launchOrFocus('Stickies')
+-- 		local app = hs.application.frontmostApplication()
+-- 		-- local wins = app:focusedWindow()
+-- 		-- always create a new post it for stickies (?)
+-- 		hs.eventtap.keyStroke({"cmd"}, 'n', 0)
+-- 	end,
+-- 	-- Open finder file in new sublime window
+-- 	[{{'shift'}, 's', 'osb'}] = function()
+-- 		local app = hs.application.frontmostApplication()
+-- 		-- print(app:title())
+-- 		if (app:title() == 'Finder') then
+-- 			withCopiedValue(function(filePath)
+-- 				hs.task.new(
+-- 					-- A full path is required, don't know how to get around
+-- 					subl_cli,
+-- 					function(c, o, e) end,
+-- 					{'-n', filePath}
+-- 				):start()
+-- 				end,
+-- 				{{"cmd", "alt"}, "c"} -- copy command for getting path from finder
+-- 			)
+-- 		end
+-- 	end,
+-- 	-- Add finder file to sublime window
+-- 	[{{'option'}, 's', 'asb'}] = function() -- add to an existing window instead
+-- 		local app = hs.application.frontmostApplication()
+-- 		-- print(app:title())
+-- 		if (app:title() == 'Finder') then
+-- 			withCopiedValue(function(filePath)
+-- 				hs.task.new(
+-- 					subl_cli,
+-- 					function(c, o, e) end,
+-- 					{'-a', filePath}
+-- 				):start()
+-- 				end,
+-- 				{{"cmd", "alt"}, "c"} -- copy command for getting path from finder
+-- 			)
+-- 		end
+-- 	end,
+-- 	[{{}, 'a', 'mic'}] = function() -- Toggle Audio unmuted of zoom conf call
+-- 		zoom_app = hs.application.get('zoom.us')  -- Need to be precise with app name (?)
+-- 		-- Could extend to move through a list of predefined apps
+-- 		-- Check whether running, and if so, mute with appropriate menu item or keybinding
+-- 		if (zoom_app:isRunning() == true) then
+-- 			-- Item is either "Unmute Audio" or "Mute Audio"
+-- 			zoom_app:selectMenuItem('Unmute Audio', true)
+-- 		end
+-- 	end,
+-- 	[{{}, 'q', 'mut'}] = function() -- Toggle Audio unmuted of zoom conf call
+-- 		zoom_app = hs.application.get('zoom.us')  -- Need to be precise with app name (?)
+-- 		-- Could extend to move through a list of predefined apps
+-- 		-- Check whether running, and if so, mute with appropriate menu item or keybinding
+-- 		if (zoom_app:isRunning() == true) then
+-- 			-- Item is either "Unmute Audio" or "Mute Audio"
+-- 			zoom_app:selectMenuItem('Mute Audio', true)
+-- 		end
+-- 	end,
+-- 	[{{}, 'z', 'zot'}] = {
+-- 		[{{}, 'c', 'cite'}] = function() zotero_bbt_cayw('cite') end,
+-- 		[{{}, 'p', 'citep'}] = function() zotero_bbt_cayw('citep') end,
+-- 		[{{}, 'b', 'full'}] = function() zotero_bbt_cayw('formatted-bibliography') end,
+-- 	}
+-- 	-- [{{}, 'z', '???'}] = function()
+-- 	-- 	print('dump key info inner')
+-- 	-- 	message_string = ""
+-- 	-- 	for k, v in pairs(recursiveKeyBindings) do
+-- 	-- 		-- print(k[2], k[3])
+-- 	-- 		message_string = message_string .. k[2] .. '\t\t\t' .. k[3] .. '\n'
+-- 	-- 		-- for k1,v1 in pairs(k) do
+-- 	-- 		-- 	print(k1)
+-- 	-- 		-- end
+-- 	-- 	end
+-- 	-- 	-- print(message_string)
+-- 	-- 	hs.alert.show(message_string, 'infty')
+-- 	-- 	-- use hs.hotkey.modal for modal escape
+-- 	-- 	control = hs.hotkey.new('ctrl', 'z', function()
+-- 	-- 		print('close keybind help')
+-- 	-- 		hs.alert.closeAll()
+-- 	-- 		control:delete()
+-- 	-- 	end)
+-- 	-- 	control:enable()
+-- 	-- end
+-- }
+
+-- hs.hotkey.bind(superhyper, 'k', spoon.RecursiveBinder.recursiveBind(recursiveKeyBindings)
+-- )
 
