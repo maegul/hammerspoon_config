@@ -14,6 +14,7 @@ local dev_backup_since_script_path = '~/bin/bin_links/python /Users/errollloyd/b
 -- hs.loadSpoon("MiroWindowsManager")
 hs.loadSpoon("RecursiveBinder")
 
+-- redundant now?
 hs.loadSpoon("WindowHalfsAndThirds")
 hs.loadSpoon("WindowScreenLeftAndRight")
 
@@ -24,6 +25,26 @@ hs.loadSpoon("WindowScreenLeftAndRight")
 
 -- RecursiveBinder (which relies on hotkey), is talkative, so setting to error
 hs.hotkey.setLogLevel(1)
+
+
+-- >> Vifari (vim for safari through lua)
+
+hs.loadSpoon("Vifari")
+
+spoon.Vifari:start() -- this will add hooks. `:stop()` to remove hooks
+
+-- or if you want to customize it
+
+-- spoon.Vifari:start({
+--     -- example your local config here
+--     scrollStep = 150
+--     ,  -- Change scroll step
+--     -- mapping = {
+--     --     ["j"] = "cmdScrollDownFast",  -- Change existing mapping
+--     --     ["n"] = { "cmd", "n" },       -- Add new mapping
+--     --     ["x"] = false,                -- Disable a mapping
+--     -- }
+-- })
 
 
 -- > Utility Functions
